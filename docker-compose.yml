@@ -1,34 +1,48 @@
-version: '3'
+version: '2'
 services:
-  hive:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: parrotstream/hive:latest
-    external_links:
-    - hadoop
-    - zookeeper
-    - postgres
+  hive-metastore:
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    image: ytqiu/hive-metastore
+    #external_links:
+    #- hadoop
+    #- zookeeper
+    #- postgres
     networks:
-    - parrot
+      parrot:
+        aliases:
+        - hive-metastore
     volumes:
-    - hive_conf:/opt/hive/conf
+    - ./etc/supervisord.conf:/etc/supervisord.conf
+    - ./etc/hive/conf/hive-site.xml:/etc/hive/conf/hive-site.xml
     environment:
-      PGPASSWORD: postgres
+      DB_TYPE: mysql 
     ports:
-    - 10000:10000
-    - 10001:10001
-    - 10002:10002
-    - 10003:10003
     - 9083:9083
-    - 50111:50111
-    - 9999:9999
-volumes:
-  hadoop_conf: null
-  hive_conf: null
+  hive-metastore1:
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    image: ytqiu/hive-metastore
+    #external_links:
+    #- hadoop
+    #- zookeeper
+    #- postgres
+    networks:
+      parrot:
+        aliases:
+        - hive-metastore1
+    volumes:
+    - ./etc/supervisord.conf:/etc/supervisord.conf
+    - ./etc/hive/conf/hive-site.xml:/etc/hive/conf/hive-site.xml
+    environment:
+      DB_TYPE: mysql 
+    ports:
+    - 9084:9083
 networks:
-  default:
+  parrot:
     external:
       name: parrot
-  parrot:
-    driver: bridge
+#  parrot:
+#    driver: bridge
